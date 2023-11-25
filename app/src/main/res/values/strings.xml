@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">simple-mvvm</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="change_color">Change Color</string>
+    <string name="changed_color">Color has been changed to: %1$s</string>
+    <string name="change_color_screen_title">Change Color (%1$s)</string>
+    <string name="selected">Selected</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+</resources>
