@@ -1,7 +1,6 @@
 package com.ru.simple_mvvm.views.change_color
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +8,10 @@ import android.view.ViewTreeObserver
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.databinding.FragmentChangeColorBinding
-import com.ru.simple_mvvm.views.HasScreenTitle
-import com.ru.simple_mvvm.views.base.BaseFragment
-import com.ru.simple_mvvm.views.base.BaseScreen
-import com.ru.simple_mvvm.views.base.BaseViewModel
-import com.ru.simple_mvvm.views.base.screenViewModel
+import com.ru.foundation.views.HasScreenTitle
+import com.ru.foundation.views.BaseFragment
+import com.ru.foundation.views.BaseScreen
+import com.ru.foundation.views.screenViewModel
 
 class ChangeColorFragment : BaseFragment(), HasScreenTitle {
 

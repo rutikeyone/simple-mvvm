@@ -1,6 +1,6 @@
-package com.ru.simple_mvvm.views
+package com.ru.foundation.navigator
 
-import com.ru.simple_mvvm.views.base.BaseScreen
+import com.ru.foundation.views.BaseScreen
 
 interface Navigator {
 

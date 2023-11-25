@@ -1,4 +1,4 @@
-package com.ru.simple_mvvm.utils
+package com.ru.foundation.utils
 
 typealias ResourceAction<T> = (T) -> Unit
 

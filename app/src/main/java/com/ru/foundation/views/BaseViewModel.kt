@@ -1,9 +1,9 @@
-package com.ru.simple_mvvm.views.base
+package com.ru.foundation.views
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.ru.simple_mvvm.utils.Event
+import com.ru.foundation.utils.Event
 
 typealias LiveEvent<T> = LiveData<Event<T>>
 typealias MutableLiveEvent<T> = MutableLiveData<Event<T>>

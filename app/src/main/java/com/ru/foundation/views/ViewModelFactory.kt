@@ -1,25 +1,26 @@
-package com.ru.simple_mvvm.views.base
+package com.ru.foundation.views
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
-import com.ru.simple_mvvm.ARG_SCREEN
-import com.ru.simple_mvvm.App
-import com.ru.simple_mvvm.MainViewModel
+import com.ru.foundation.ARG_SCREEN
+import com.ru.foundation.BaseApplication
+import java.lang.IllegalStateException
 import java.lang.reflect.Constructor
 
 
 inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<VM> {
-    val application = requireActivity().application as App
+    val application = requireActivity().application
+    val applicationException = IllegalStateException("Application must implementation interface BaseApplication")
+    val baseApplication = if(application is BaseApplication) application else throw applicationException
+    val activity = requireActivity()
+    val fragmentHolderException = IllegalStateException("Activity must implementation interface FragmentHolder")
+    val fragmentHolder = if(activity is FragmentHolder) activity else throw fragmentHolderException
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
-    val provider = ViewModelProvider(requireActivity(), ViewModelProvider.AndroidViewModelFactory(application))
-    val mainViewModel = provider[MainViewModel::class.java]
-    val dependencies = application.models + listOf(screen, mainViewModel)
+    val activityScopeViewModel = fragmentHolder.getActivityScopeViewModel()
+    val dependencies = baseApplication.repositoryDependencies + listOf(screen, activityScopeViewModel)
     ViewModelFactory(dependencies, this)
 }
 

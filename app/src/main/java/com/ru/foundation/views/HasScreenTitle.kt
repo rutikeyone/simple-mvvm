@@ -1,4 +1,4 @@
-package com.ru.simple_mvvm.views
+package com.ru.foundation.views
 
 interface HasScreenTitle {
 

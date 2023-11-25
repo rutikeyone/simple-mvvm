@@ -6,14 +6,14 @@ import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.model.colors.ColorListener
 import com.ru.simple_mvvm.model.colors.ColorsRepository
 import com.ru.simple_mvvm.model.colors.NamedColor
-import com.ru.simple_mvvm.views.Navigator
-import com.ru.simple_mvvm.views.UIActions
-import com.ru.simple_mvvm.views.base.BaseViewModel
+import com.ru.foundation.navigator.Navigator
+import com.ru.foundation.uiactions.UiActions
+import com.ru.foundation.views.BaseViewModel
 import com.ru.simple_mvvm.views.change_color.ChangeColorFragment
 
 class CurrentColorViewModel(
     private val navigator: Navigator,
-    private val uiActions: UIActions,
+    private val uiActions: UiActions,
     private val colorsRepository: ColorsRepository,
 ) : BaseViewModel() {
 

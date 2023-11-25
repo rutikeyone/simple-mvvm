@@ -1,4 +1,4 @@
-package com.ru.simple_mvvm.views.base
+package com.ru.foundation.views
 
 import java.io.Serializable
 

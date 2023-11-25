@@ -1,7 +1,6 @@
-package com.ru.simple_mvvm.views.base
+package com.ru.foundation.views
 
 import androidx.fragment.app.Fragment
-import com.ru.simple_mvvm.MainActivity
 
 abstract class BaseFragment : Fragment() {
 
@@ -9,7 +8,7 @@ abstract class BaseFragment : Fragment() {
 
     fun notifyScreenChanged() {
         val activity = requireActivity()
-        if (activity is MainActivity) {
+        if (activity is FragmentHolder) {
             activity.notifyScreenChanged()
         }
     }

@@ -1,8 +1,8 @@
-package com.ru.simple_mvvm.views
+package com.ru.foundation.uiactions
 
 import androidx.annotation.StringRes
 
-interface UIActions {
+interface UiActions {
 
     fun toast(message: String)
 

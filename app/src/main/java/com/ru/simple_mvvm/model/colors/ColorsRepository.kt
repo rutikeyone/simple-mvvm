@@ -1,6 +1,6 @@
 package com.ru.simple_mvvm.model.colors
 
-import com.ru.simple_mvvm.model.Repository
+import com.ru.foundation.model.Repository
 
 typealias ColorListener = (NamedColor) -> Unit
 

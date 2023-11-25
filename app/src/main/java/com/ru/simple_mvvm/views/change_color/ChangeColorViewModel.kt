@@ -4,19 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.model.colors.ColorsRepository
 import com.ru.simple_mvvm.model.colors.NamedColor
-import com.ru.simple_mvvm.views.Navigator
-import com.ru.simple_mvvm.views.UIActions
-import com.ru.simple_mvvm.views.base.BaseScreen
-import com.ru.simple_mvvm.views.base.BaseViewModel
+import com.ru.foundation.navigator.Navigator
+import com.ru.foundation.uiactions.UiActions
+import com.ru.foundation.views.BaseViewModel
 
 class ChangeColorViewModel(
     private val colorsRepository: ColorsRepository,
     private val navigator: Navigator,
-    private val uiActions: UIActions,
+    private val uiActions: UiActions,
     screen: ChangeColorFragment.Screen,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel(), ColorsAdapter.Listener {

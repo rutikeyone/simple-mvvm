@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.transition.Hold
 import com.ru.simple_mvvm.databinding.ItemColorBinding
 import com.ru.simple_mvvm.model.colors.NamedColor
 

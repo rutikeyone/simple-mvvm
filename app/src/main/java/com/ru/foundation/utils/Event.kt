@@ -1,4 +1,4 @@
-package com.ru.simple_mvvm.utils
+package com.ru.foundation.utils
 
 class Event<T>(
     private val value: T
