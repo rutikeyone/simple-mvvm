@@ -12,8 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/saveButton"
-        tools:listitem="@layout/item_color"/>
+        app:layout_constraintBottom_toTopOf="@id/saveButton"/>
 
     <Button
         android:id="@+id/saveButton"
@@ -38,5 +37,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/saveButton"/>
+
+    <include layout="@layout/part_result"/>
+
+    <ProgressBar
+        android:id="@+id/saveProgressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/saveButton"
+        app:layout_constraintBottom_toBottomOf="@id/saveButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
