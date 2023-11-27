@@ -57,4 +57,9 @@ class CurrentColorViewModel(
 
     fun tryAgain() {}
 
+    private fun load() {
+        colorsRepository.getCurrentColor().enqueue {
+
+        }
+    }
 }
