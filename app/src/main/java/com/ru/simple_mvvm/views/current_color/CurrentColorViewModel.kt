@@ -34,6 +34,7 @@ class CurrentColorViewModel(
 
     init {
         colorsRepository.addListener(colorListener)
+        load()
     }
 
     override fun onCleared() {
@@ -55,11 +56,9 @@ class CurrentColorViewModel(
         navigator.launch(screen)
     }
 
-    fun tryAgain() {}
+    fun tryAgain() = load()
 
     private fun load() {
-        colorsRepository.getCurrentColor().enqueue {
-
-        }
+        colorsRepository.getCurrentColor().into(_currentColor)
     }
 }
