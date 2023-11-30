@@ -46,13 +46,18 @@ class MainActivity : AppCompatActivity(), FragmentHolder {
     }
 
     override fun onResume() {
-        super.onResume()
         activityViewModel.navigator.setTarget(navigator)
+        super.onResume()
     }
 
     override fun onPause() {
-        super.onPause()
         activityViewModel.navigator.setTarget(null)
+        super.onPause()
+    }
+
+    override fun onBackPressed() {
+        navigator.onBackPressed()
+        super.onBackPressed()
     }
 
     override fun onDestroy() {

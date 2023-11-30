@@ -4,6 +4,6 @@ import com.ru.foundation.model.Repository
 
 interface BaseApplication {
 
-    val repositoryDependencies: List<Repository>
+    val singletonScopeDependencies: List<Any>
 
 }

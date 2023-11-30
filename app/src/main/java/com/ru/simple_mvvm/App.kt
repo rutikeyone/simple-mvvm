@@ -2,17 +2,23 @@ package com.ru.simple_mvvm
 
 import android.app.Application
 import com.ru.foundation.BaseApplication
-import com.ru.foundation.model.Repository
-import com.ru.foundation.model.tasks.SimpleTaskFactory
+import com.ru.foundation.model.dispatchers.MainThreadDispatcher
+import com.ru.foundation.model.tasks.factories.ThreadTaskFactory
+import com.ru.foundation.model.tasks.ThreadUtils
 import com.ru.simple_mvvm.model.colors.InMemoryColorsRepository
 
 class App : Application(), BaseApplication {
 
-    private val taskFactory = SimpleTaskFactory();
+    private val taskFactory = ThreadTaskFactory();
+    private val taskUtils = ThreadUtils.Default()
+    private val dispatcher = MainThreadDispatcher()
 
-    override val repositoryDependencies = mutableListOf<Repository>(
+    private val coloRepository = InMemoryColorsRepository(taskFactory, taskUtils)
+
+    override val singletonScopeDependencies = mutableListOf<Any>(
         taskFactory,
-        InMemoryColorsRepository(taskFactory)
+        dispatcher,
+        coloRepository,
     )
 
 }

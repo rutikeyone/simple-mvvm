@@ -7,7 +7,8 @@ import androidx.lifecycle.map
 import com.ru.foundation.model.ErrorResult
 import com.ru.foundation.model.FinalResult
 import com.ru.foundation.model.SuccessResult
-import com.ru.foundation.model.tasks.TaskFactory
+import com.ru.foundation.model.dispatchers.Dispatcher
+import com.ru.foundation.model.tasks.factories.TaskFactory
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.model.colors.ColorsRepository
 import com.ru.simple_mvvm.model.colors.NamedColor
@@ -26,7 +27,8 @@ class ChangeColorViewModel(
     private val taskFactory: TaskFactory,
     screen: ChangeColorFragment.Screen,
     savedStateHandle: SavedStateHandle,
-) : BaseViewModel(), ColorsAdapter.Listener {
+    dispatcher: Dispatcher,
+) : BaseViewModel(dispatcher), ColorsAdapter.Listener {
 
     private val _availableColors = MutableLiveResult<List<NamedColor>>()
     private val _currentColorId = savedStateHandle.getLiveData(currentColorIdKey, screen.currentColorId)

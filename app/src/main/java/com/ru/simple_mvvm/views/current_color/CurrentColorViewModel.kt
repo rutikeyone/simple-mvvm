@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.ru.foundation.model.ErrorResult
 import com.ru.foundation.model.PendingResult
 import com.ru.foundation.model.SuccessResult
+import com.ru.foundation.model.dispatchers.Dispatcher
 import com.ru.foundation.model.takeSuccess
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.model.colors.ColorListener
@@ -22,7 +23,8 @@ class CurrentColorViewModel(
     private val navigator: Navigator,
     private val uiActions: UiActions,
     private val colorsRepository: ColorsRepository,
-) : BaseViewModel() {
+    dispatcher: Dispatcher,
+) : BaseViewModel(dispatcher) {
 
     private val _currentColor = MutableLiveResult<NamedColor>(PendingResult())
     val currentColor: LiveResult<NamedColor> = _currentColor

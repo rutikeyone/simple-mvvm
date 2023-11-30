@@ -20,7 +20,7 @@ inline fun <reified VM : ViewModel> BaseFragment.screenViewModel() = viewModels<
     val fragmentHolder = if(activity is FragmentHolder) activity else throw fragmentHolderException
     val screen = requireArguments().getSerializable(ARG_SCREEN) as BaseScreen
     val activityScopeViewModel = fragmentHolder.getActivityScopeViewModel()
-    val dependencies = baseApplication.repositoryDependencies + listOf(screen, activityScopeViewModel)
+    val dependencies = baseApplication.singletonScopeDependencies + listOf(screen, activityScopeViewModel)
     ViewModelFactory(dependencies, this)
 }
 

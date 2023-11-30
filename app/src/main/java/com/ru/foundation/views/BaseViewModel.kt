@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.ru.foundation.model.PendingResult
 import com.ru.foundation.utils.Event
 import com.ru.foundation.model.Result
+import com.ru.foundation.model.dispatchers.Dispatcher
 import com.ru.foundation.model.tasks.Task
 import com.ru.foundation.model.tasks.TaskListener
 
@@ -17,21 +18,31 @@ typealias LiveResult<T> = LiveData<Result<T>>
 typealias MutableLiveResult<T> = MutableLiveData<Result<T>>
 typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
 
-open class BaseViewModel : ViewModel() {
+open class BaseViewModel(
+    private val dispatcher: Dispatcher,
+) : ViewModel() {
 
     private val tasks = mutableListOf<Task<*>>()
 
     open fun onResult(result: Any) {}
 
     override fun onCleared() {
+        cleanTasks()
         super.onCleared()
+    }
+
+    fun onBackPressed() {
+        cleanTasks()
+    }
+
+    private fun cleanTasks() {
         tasks.forEach { it.cancel() }
         tasks.clear()
     }
 
     fun <T> Task<T>.safeEnqueue(listener: TaskListener<T>? = null) {
         tasks.add(this)
-        this.enqueue {
+        this.enqueue(dispatcher) {
             tasks.remove(this)
             listener?.invoke(it)
         }
