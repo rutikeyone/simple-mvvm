@@ -2,7 +2,7 @@ package com.ru.simple_mvvm
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.annotation.AnimRes
+import androidx.activity.OnBackPressedCallback
 import com.ru.foundation.ActivityScopeViewModel
 import com.ru.foundation.navigator.IntermediateNavigator
 import com.ru.foundation.navigator.StackFragmentNavigator
@@ -14,6 +14,14 @@ import com.ru.simple_mvvm.views.current_color.CurrentColorFragment
 class MainActivity : AppCompatActivity(), FragmentHolder {
     private lateinit var navigator: StackFragmentNavigator
 
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            this.isEnabled = false
+            navigator.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
     private val activityViewModel by viewModelCreator<ActivityScopeViewModel> {
         ActivityScopeViewModel(
             uiActions = AndroidUiActions(applicationContext),
@@ -24,6 +32,7 @@ class MainActivity : AppCompatActivity(), FragmentHolder {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         navigator = StackFragmentNavigator(
             activity = this,
@@ -53,11 +62,6 @@ class MainActivity : AppCompatActivity(), FragmentHolder {
     override fun onPause() {
         activityViewModel.navigator.setTarget(null)
         super.onPause()
-    }
-
-    override fun onBackPressed() {
-        navigator.onBackPressed()
-        super.onBackPressed()
     }
 
     override fun onDestroy() {

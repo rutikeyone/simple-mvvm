@@ -1,5 +1,6 @@
 package com.ru.simple_mvvm.views.change_color
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ class ColorsAdapter(
 ): RecyclerView.Adapter<ColorsAdapter.Holder>(), View.OnClickListener {
 
     var colors: List<NamedColorListItem> = emptyList()
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()

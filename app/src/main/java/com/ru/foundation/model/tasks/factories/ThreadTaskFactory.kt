@@ -3,7 +3,6 @@ package com.ru.foundation.model.tasks.factories
 import com.ru.foundation.model.tasks.AbstractTask
 import com.ru.foundation.model.tasks.SynchronizedTask
 import com.ru.foundation.model.tasks.Task
-import com.ru.foundation.model.tasks.TaskBody
 import com.ru.foundation.model.tasks.TaskListener
 
 class ThreadTaskFactory : TaskFactory {

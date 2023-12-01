@@ -16,7 +16,6 @@ abstract class AbstractTask<T> : Task<T> {
             finalResult = it
         }
         doEnqueue(wrapperListener)
-
         try {
             when(val result = finalResult) {
                 is ErrorResult -> throw result.exception
