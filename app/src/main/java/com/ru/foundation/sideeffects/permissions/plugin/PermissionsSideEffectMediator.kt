@@ -11,13 +11,13 @@ import com.ru.foundation.sideeffects.SideEffectMediator
 import com.ru.foundation.sideeffects.permissions.Permissions
 
 class PermissionsSideEffectMediator(
-    private val appContext: Context
+    private val applicationContext: Context
 ) : SideEffectMediator<PermissionsSideEffectImpl>(), Permissions {
 
     val retainedState = RetainedState()
 
     override fun hasPermissions(permission: String): Boolean {
-        return ContextCompat.checkSelfPermission(appContext, permission) == PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(applicationContext, permission) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun requestPermission(permission: String): Task<PermissionStatus> = CallbackTask.create { emitter ->

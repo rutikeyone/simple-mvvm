@@ -13,7 +13,6 @@ class DialogsSideEffectMediator : SideEffectMediator<DialogsSideEffectImpl>(), D
 
     override fun show(dialogConfig: DialogConfig): Task<Boolean> = CallbackTask.create { emitter ->
         if (retainedState.record != null) {
-            // for now allowing only 1 active dialog at a time
             emitter.emit(ErrorResult(IllegalStateException("Can't launch more than 1 dialog at a time")))
             return@create
         }

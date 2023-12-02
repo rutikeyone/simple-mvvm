@@ -7,14 +7,14 @@ import com.ru.foundation.sideeffects.SideEffectMediator
 import com.ru.foundation.sideeffects.toasts.Toasts
 
 class ToastsSideEffectMediator(
-    private val appContext: Context
+    private val applicationContext: Context
 ) : SideEffectMediator<Nothing>(), Toasts {
 
     private val dispatcher = MainThreadDispatcher()
 
     override fun toast(message: String) {
         dispatcher.dispatch {
-            Toast.makeText(appContext, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
         }
     }
 
