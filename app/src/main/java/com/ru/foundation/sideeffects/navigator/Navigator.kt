@@ -1,4 +1,4 @@
-package com.ru.foundation.navigator
+package com.ru.foundation.sideeffects.navigator
 
 import com.ru.foundation.views.BaseScreen
 
@@ -6,6 +6,6 @@ interface Navigator {
 
     fun launch(screen: BaseScreen)
 
-    fun navigateBack(result: Any? = null)
+    fun goBack(result: Any? = null)
 
 }

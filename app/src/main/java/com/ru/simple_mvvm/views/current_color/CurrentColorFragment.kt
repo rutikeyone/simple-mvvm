@@ -28,6 +28,7 @@ class CurrentColorFragment() : BaseFragment() {
      }
 
      override fun onViewCreated(view: View, savedInstanceState: Bundle?) = with(binding) {
+          this.askPermissionsButton.setOnClickListener { viewModel.requestPermission() }
           viewModel.currentColor.observe(viewLifecycleOwner) { result ->
                renderSimpleResult(
                     root = root,

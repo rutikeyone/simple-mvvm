@@ -1,19 +1,19 @@
 package com.ru.foundation
 
 import androidx.lifecycle.ViewModel
-import com.ru.foundation.navigator.IntermediateNavigator
-import com.ru.foundation.navigator.Navigator
-import com.ru.foundation.uiactions.UiActions
+import com.ru.foundation.sideeffects.SideEffectMediator
+import com.ru.foundation.sideeffects.SideEffectMediatorsHolder
 
-const val ARG_SCREEN = "ARG_SCREEN"
+class ActivityScopeViewModel : ViewModel() {
 
-class ActivityScopeViewModel(
-    private val uiActions: UiActions,
-    val navigator: IntermediateNavigator,
-): ViewModel(), Navigator by navigator, UiActions by uiActions {
+    internal val sideEffectMediatorsHolder = SideEffectMediatorsHolder()
+
+    val sideEffectMediators: List<SideEffectMediator<*>>
+        get() = sideEffectMediatorsHolder.mediators
 
     override fun onCleared() {
         super.onCleared()
-        navigator.clear()
+        sideEffectMediatorsHolder.clear()
     }
+
 }

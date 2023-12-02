@@ -6,21 +6,20 @@ import com.ru.foundation.model.tasks.AbstractTask
 import com.ru.foundation.model.tasks.SynchronizedTask
 import com.ru.foundation.model.tasks.Task
 import com.ru.foundation.model.tasks.TaskListener
-import java.lang.IllegalStateException
 
-class HandlerThreadTaskFactory: TaskFactory {
+class HandlerThreadTasksFactory : TasksFactory {
 
     private val thread = HandlerThread(javaClass.simpleName)
-    private val handler = Handler(thread.looper)
-
-    private var destroyed = false
 
     init {
-        if (destroyed) throw IllegalStateException("Factory is closed")
         thread.start()
     }
 
+    private val handler = Handler(thread.looper)
+    private var destroyed = false
+
     override fun <T> async(body: TaskBody<T>): Task<T> {
+        if (destroyed) throw IllegalStateException("Factory is closed")
         return SynchronizedTask(HandlerThreadTask(body))
     }
 
@@ -30,19 +29,18 @@ class HandlerThreadTaskFactory: TaskFactory {
     }
 
     private inner class HandlerThreadTask<T>(
-        private val body: TaskBody<T>,
-    ): AbstractTask<T>() {
+        private val body: TaskBody<T>
+    ) : AbstractTask<T>() {
 
         private var thread: Thread? = null
 
         override fun doEnqueue(listener: TaskListener<T>) {
             val runnable = Runnable {
                 thread = Thread {
-                   executeBody(body, listener)
-                }.also {
-                    it.start()
-                    it.join()
+                    executeBody(body, listener)
                 }
+                thread?.start()
+                thread?.join()
             }
             handler.post(runnable)
         }

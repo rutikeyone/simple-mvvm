@@ -2,13 +2,12 @@ package com.ru.foundation.model.tasks
 
 interface ThreadUtils {
 
-    fun sleep(milliseconds: Long)
+    fun sleep(millis: Long)
 
-    class Default: ThreadUtils {
-        override fun sleep(milliseconds: Long) {
-            Thread.sleep(milliseconds)
+    class Default : ThreadUtils {
+        override fun sleep(millis: Long) {
+            Thread.sleep(millis)
         }
-
     }
 
 }

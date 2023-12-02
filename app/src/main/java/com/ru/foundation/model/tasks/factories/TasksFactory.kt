@@ -4,7 +4,7 @@ import com.ru.foundation.model.tasks.Task
 
 typealias TaskBody<T> = () -> T
 
-interface TaskFactory {
+interface TasksFactory {
 
     fun <T> async(body: TaskBody<T>): Task<T>
 

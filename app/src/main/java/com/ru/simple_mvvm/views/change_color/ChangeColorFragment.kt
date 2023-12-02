@@ -48,7 +48,7 @@ class ChangeColorFragment : BaseFragment(), HasScreenTitle {
         }
 
         viewModel.screenTitle.observe(viewLifecycleOwner) {
-            notifyScreenChanged()
+            notifyScreenUpdates()
         }
 
         onTryAgain(root) {

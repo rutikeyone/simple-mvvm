@@ -1,76 +1,43 @@
 package com.ru.simple_mvvm
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
-import com.ru.foundation.ActivityScopeViewModel
-import com.ru.foundation.navigator.IntermediateNavigator
-import com.ru.foundation.navigator.StackFragmentNavigator
-import com.ru.foundation.uiactions.AndroidUiActions
-import com.ru.foundation.utils.viewModelCreator
-import com.ru.foundation.views.FragmentHolder
+import com.ru.foundation.sideeffects.SideEffectPluginsManager
+import com.ru.foundation.sideeffects.dialogs.plugin.DialogsPlugin
+import com.ru.foundation.sideeffects.intents.plugin.IntentsPlugin
+import com.ru.foundation.sideeffects.navigator.plugin.NavigatorPlugin
+import com.ru.foundation.sideeffects.navigator.plugin.StackFragmentNavigator
+import com.ru.foundation.sideeffects.permissions.plugin.PermissionsPlugin
+import com.ru.foundation.sideeffects.resources.plugin.ResourcesPlugin
+import com.ru.foundation.sideeffects.toasts.plugin.ToastsPlugin
+import com.ru.foundation.views.activity.BaseActivity
 import com.ru.simple_mvvm.views.current_color.CurrentColorFragment
 
-class MainActivity : AppCompatActivity(), FragmentHolder {
-    private lateinit var navigator: StackFragmentNavigator
+class MainActivity : BaseActivity() {
 
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            this.isEnabled = false
-            navigator.onBackPressed()
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }
-
-    private val activityViewModel by viewModelCreator<ActivityScopeViewModel> {
-        ActivityScopeViewModel(
-            uiActions = AndroidUiActions(applicationContext),
-            navigator = IntermediateNavigator(),
-        )
+    override fun registerPlugins(manager: SideEffectPluginsManager) = with (manager) {
+        val navigator = createNavigator()
+        register(ToastsPlugin())
+        register(ResourcesPlugin())
+        register(NavigatorPlugin(navigator))
+        register(PermissionsPlugin())
+        register(DialogsPlugin())
+        register(IntentsPlugin())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-
-        navigator = StackFragmentNavigator(
-            activity = this,
-            containerId = R.id.fragmentContainer,
-            defaultTitle = getString(R.string.app_name),
-            animations = StackFragmentNavigator.Animations(
-                R.anim.enter,
-                R.anim.exit,
-                R.anim.pop_enter,
-                R.anim.pop_exit,
-            ),
-            initialScreenCreator = { CurrentColorFragment.Screen() }
-        )
-        navigator.onCreate(savedInstanceState)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressedDispatcher.onBackPressed()
-        return true
-    }
-
-    override fun onResume() {
-        activityViewModel.navigator.setTarget(navigator)
-        super.onResume()
-    }
-
-    override fun onPause() {
-        activityViewModel.navigator.setTarget(null)
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        navigator.onDestroy()
-        super.onDestroy()
-    }
-
-    override fun notifyScreenChanged() = navigator.notifyScreenChanged()
-
-    override fun getActivityScopeViewModel(): ActivityScopeViewModel = activityViewModel
-
+    private fun createNavigator() = StackFragmentNavigator(
+        containerId = R.id.fragmentContainer,
+        defaultTitle = getString(R.string.app_name),
+        animations = StackFragmentNavigator.Animations(
+            enterAnim = R.anim.enter,
+            exitAnim = R.anim.exit,
+            popEnterAnim = R.anim.pop_enter,
+            popExitAnim = R.anim.pop_exit
+        ),
+        initialScreenCreator = { CurrentColorFragment.Screen() }
+    )
 }

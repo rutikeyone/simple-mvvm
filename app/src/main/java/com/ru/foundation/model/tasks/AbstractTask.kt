@@ -3,7 +3,7 @@ package com.ru.foundation.model.tasks
 import com.ru.foundation.model.ErrorResult
 import com.ru.foundation.model.FinalResult
 import com.ru.foundation.model.SuccessResult
-import com.ru.foundation.model.dispatchers.Dispatcher
+import com.ru.foundation.model.tasks.dispatchers.Dispatcher
 import com.ru.foundation.model.tasks.factories.TaskBody
 import com.ru.foundation.utils.delegates.Await
 
@@ -17,12 +17,12 @@ abstract class AbstractTask<T> : Task<T> {
         }
         doEnqueue(wrapperListener)
         try {
-            when(val result = finalResult) {
+            when (val result = finalResult) {
                 is ErrorResult -> throw result.exception
                 is SuccessResult -> return result.data
             }
         } catch (e: Exception) {
-            if(e is InterruptedException) {
+            if (e is InterruptedException) {
                 cancel()
                 throw CancelledException(e)
             } else {
@@ -32,13 +32,13 @@ abstract class AbstractTask<T> : Task<T> {
     }
 
     final override fun enqueue(dispatcher: Dispatcher, listener: TaskListener<T>) {
-        val wrapperListener: TaskListener<T> = {
+        val wrappedListener: TaskListener<T> = {
             finalResult = it
             dispatcher.dispatch {
-                listener.invoke(finalResult)
+                listener(finalResult)
             }
         }
-        doEnqueue(wrapperListener)
+        doEnqueue(wrappedListener)
     }
 
     final override fun cancel() {

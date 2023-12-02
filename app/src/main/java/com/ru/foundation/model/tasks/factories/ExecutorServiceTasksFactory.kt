@@ -4,29 +4,31 @@ import com.ru.foundation.model.tasks.AbstractTask
 import com.ru.foundation.model.tasks.SynchronizedTask
 import com.ru.foundation.model.tasks.Task
 import com.ru.foundation.model.tasks.TaskListener
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
 
-class ThreadTaskFactory : TaskFactory {
+class ExecutorServiceTasksFactory(
+    private val executorService: ExecutorService
+) : TasksFactory {
 
     override fun <T> async(body: TaskBody<T>): Task<T> {
-        return SynchronizedTask(ThreadTask(body))
+        return SynchronizedTask(ExecutorServiceTask(body))
     }
 
-    private class ThreadTask<T>(
+    private inner class ExecutorServiceTask<T>(
         private val body: TaskBody<T>
-    ): AbstractTask<T>() {
+    ) : AbstractTask<T>() {
 
-        private var thread: Thread? = null
+        private var future: Future<*>? = null
 
         override fun doEnqueue(listener: TaskListener<T>) {
-            thread = Thread {
+            future = executorService.submit {
                 executeBody(body, listener)
-            }.also { it.start() }
+            }
         }
 
         override fun doCancel() {
-            thread?.interrupt()
+            future?.cancel(true)
         }
-
     }
-
 }

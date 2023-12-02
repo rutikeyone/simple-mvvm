@@ -7,13 +7,14 @@ import androidx.lifecycle.map
 import com.ru.foundation.model.ErrorResult
 import com.ru.foundation.model.FinalResult
 import com.ru.foundation.model.SuccessResult
-import com.ru.foundation.model.dispatchers.Dispatcher
-import com.ru.foundation.model.tasks.factories.TaskFactory
+import com.ru.foundation.model.tasks.dispatchers.Dispatcher
+import com.ru.foundation.model.tasks.factories.TasksFactory
+import com.ru.foundation.sideeffects.navigator.Navigator
+import com.ru.foundation.sideeffects.resources.Resources
+import com.ru.foundation.sideeffects.toasts.Toasts
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.model.colors.ColorsRepository
 import com.ru.simple_mvvm.model.colors.NamedColor
-import com.ru.foundation.navigator.Navigator
-import com.ru.foundation.uiactions.UiActions
 import com.ru.foundation.views.BaseViewModel
 import com.ru.foundation.views.LiveResult
 import com.ru.foundation.views.MediatorLiveResult
@@ -21,10 +22,11 @@ import com.ru.foundation.views.MutableLiveResult
 import java.lang.IllegalStateException
 
 class ChangeColorViewModel(
-    private val colorsRepository: ColorsRepository,
     private val navigator: Navigator,
-    private val uiActions: UiActions,
-    private val taskFactory: TaskFactory,
+    private val toast: Toasts,
+    private val resources: Resources,
+    private val colorsRepository: ColorsRepository,
+    private val tasksFactory: TasksFactory,
     screen: ChangeColorFragment.Screen,
     savedStateHandle: SavedStateHandle,
     dispatcher: Dispatcher,
@@ -40,9 +42,9 @@ class ChangeColorViewModel(
     val screenTitle: LiveData<String> = _viewState.map { result ->
         if(result is SuccessResult) {
             val currentColor = result.data.colors.first { it.selected }
-            uiActions.getString(R.string.change_color_screen_title, currentColor.namedColor)
+            resources.getString(R.string.change_color_screen_title, currentColor.namedColor)
         } else {
-            uiActions.getString(R.string.change_color_screen_title_simple)
+            resources.getString(R.string.change_color_screen_title_simple)
         }
     }
 
@@ -55,7 +57,7 @@ class ChangeColorViewModel(
 
     fun onSavePressed() {
         _saveInProgress.postValue(true)
-        taskFactory.async {
+        tasksFactory.async {
             val currentColorId = _currentColorId.value ?: throw IllegalStateException("Current color ID should be not NULL")
             val currentColor = colorsRepository.getById(currentColorId).await()
             colorsRepository.setCurrentColor(currentColor).await()
@@ -66,12 +68,12 @@ class ChangeColorViewModel(
     private fun onSaved(result: FinalResult<NamedColor>) {
         _saveInProgress.value = false
         when (result) {
-            is SuccessResult -> navigator.navigateBack(result.data)
-            is ErrorResult -> uiActions.toast(uiActions.getString(R.string.error_happened))
+            is SuccessResult -> navigator.goBack(result.data)
+            is ErrorResult -> toast.toast(resources.getString(R.string.error_happened))
         }
     }
 
-    fun onCancelPressed() = navigator.navigateBack()
+    fun onCancelPressed() = navigator.goBack()
 
     private fun mergeSources() {
         val colors = _availableColors.value ?: return

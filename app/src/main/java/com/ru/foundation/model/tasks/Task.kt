@@ -1,13 +1,13 @@
 package com.ru.foundation.model.tasks
 
 import com.ru.foundation.model.FinalResult
-import com.ru.foundation.model.dispatchers.Dispatcher
+import com.ru.foundation.model.tasks.dispatchers.Dispatcher
 
 typealias TaskListener<T> = (FinalResult<T>) -> Unit
 
 class CancelledException(
-    private val exception: Exception? = null,
-) : Exception(exception)
+    originException: Exception? = null
+) : Exception(originException)
 
 interface Task<T> {
 

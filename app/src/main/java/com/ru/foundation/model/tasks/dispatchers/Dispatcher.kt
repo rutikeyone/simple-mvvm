@@ -1,4 +1,4 @@
-package com.ru.foundation.model.dispatchers
+package com.ru.foundation.model.tasks.dispatchers
 
 interface Dispatcher {
 

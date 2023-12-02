@@ -1,13 +1,12 @@
 package com.ru.simple_mvvm.model.colors
 
 import android.graphics.Color
-import com.ru.foundation.model.SuccessResult
 import com.ru.foundation.model.tasks.Task
-import com.ru.foundation.model.tasks.factories.TaskFactory
 import com.ru.foundation.model.tasks.ThreadUtils
+import com.ru.foundation.model.tasks.factories.TasksFactory
 
 class InMemoryColorsRepository(
-    private val taskFactory: TaskFactory,
+    private val tasksFactory: TasksFactory,
     private val threadUtils: ThreadUtils,
 ) : ColorsRepository {
 
@@ -15,7 +14,7 @@ class InMemoryColorsRepository(
 
     private var currentColor = AVAILABLE_COLORS[0]
 
-    override fun getAvailableColor(): Task<List<NamedColor>> = taskFactory.async {
+    override fun getAvailableColor(): Task<List<NamedColor>> = tasksFactory.async {
         threadUtils.sleep(1000)
         AVAILABLE_COLORS
     }
@@ -28,12 +27,12 @@ class InMemoryColorsRepository(
         listeners -= listener
     }
 
-    override fun getById(id: Long): Task<NamedColor> = taskFactory.async {
+    override fun getById(id: Long): Task<NamedColor> = tasksFactory.async {
         threadUtils.sleep(1000)
         return@async AVAILABLE_COLORS.first { it.id == id }
     }
 
-    override fun setCurrentColor(color: NamedColor): Task<Unit> = taskFactory.async {
+    override fun setCurrentColor(color: NamedColor): Task<Unit> = tasksFactory.async {
         threadUtils.sleep(1000)
         if(currentColor != color) {
             currentColor = color
@@ -41,7 +40,7 @@ class InMemoryColorsRepository(
         }
     }
 
-    override fun getCurrentColor(): Task<NamedColor> = taskFactory.async {
+    override fun getCurrentColor(): Task<NamedColor> = tasksFactory.async {
         threadUtils.sleep(1000)
         return@async currentColor
     }

@@ -5,11 +5,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ru.foundation.model.PendingResult
-import com.ru.foundation.utils.Event
 import com.ru.foundation.model.Result
-import com.ru.foundation.model.dispatchers.Dispatcher
 import com.ru.foundation.model.tasks.Task
 import com.ru.foundation.model.tasks.TaskListener
+import com.ru.foundation.model.tasks.dispatchers.Dispatcher
+import com.ru.foundation.utils.Event
 
 typealias LiveEvent<T> = LiveData<Event<T>>
 typealias MutableLiveEvent<T> = MutableLiveData<Event<T>>
@@ -19,25 +19,23 @@ typealias MutableLiveResult<T> = MutableLiveData<Result<T>>
 typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
 
 open class BaseViewModel(
-    private val dispatcher: Dispatcher,
+    private val dispatcher: Dispatcher
 ) : ViewModel() {
 
-    private val tasks = mutableListOf<Task<*>>()
-
-    open fun onResult(result: Any) {}
+    private val tasks = mutableSetOf<Task<*>>()
 
     override fun onCleared() {
-        cleanTasks()
         super.onCleared()
+        clearTasks()
     }
 
-    fun onBackPressed() {
-        cleanTasks()
+    open fun onResult(result: Any) {
+
     }
 
-    private fun cleanTasks() {
-        tasks.forEach { it.cancel() }
-        tasks.clear()
+    open fun onBackPressed(): Boolean {
+        clearTasks()
+        return false
     }
 
     fun <T> Task<T>.safeEnqueue(listener: TaskListener<T>? = null) {
@@ -53,6 +51,11 @@ open class BaseViewModel(
         this.safeEnqueue {
             liveResult.value = it
         }
+    }
+
+    private fun clearTasks() {
+        tasks.forEach { it.cancel() }
+        tasks.clear()
     }
 
 }
