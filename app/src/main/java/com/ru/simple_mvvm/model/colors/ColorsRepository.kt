@@ -1,20 +1,18 @@
 package com.ru.simple_mvvm.model.colors
 
 import com.ru.foundation.model.Repository
-import com.ru.foundation.model.tasks.Task
-import java.util.jar.Attributes.Name
 
 typealias ColorListener = (NamedColor) -> Unit
 
 interface ColorsRepository : Repository {
 
-    fun getAvailableColor(): Task<List<NamedColor>>
+    suspend fun getAvailableColor(): List<NamedColor>
 
-    fun getById(id: Long): Task<NamedColor>
+    suspend fun getById(id: Long): NamedColor
 
-    fun setCurrentColor(color: NamedColor): Task<Unit>
+    suspend fun setCurrentColor(color: NamedColor)
 
-    fun getCurrentColor(): Task<NamedColor>
+    suspend fun getCurrentColor(): NamedColor
 
     fun addListener(listener: ColorListener)
 

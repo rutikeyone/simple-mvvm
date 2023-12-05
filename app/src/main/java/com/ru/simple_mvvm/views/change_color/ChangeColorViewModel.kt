@@ -4,11 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.map
-import com.ru.foundation.model.ErrorResult
-import com.ru.foundation.model.FinalResult
 import com.ru.foundation.model.SuccessResult
-import com.ru.foundation.model.tasks.dispatchers.Dispatcher
-import com.ru.foundation.model.tasks.factories.TasksFactory
 import com.ru.foundation.sideeffects.navigator.Navigator
 import com.ru.foundation.sideeffects.resources.Resources
 import com.ru.foundation.sideeffects.toasts.Toasts
@@ -19,18 +15,19 @@ import com.ru.foundation.views.BaseViewModel
 import com.ru.foundation.views.LiveResult
 import com.ru.foundation.views.MediatorLiveResult
 import com.ru.foundation.views.MutableLiveResult
+import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.lang.IllegalStateException
+import kotlin.coroutines.cancellation.CancellationException
 
 class ChangeColorViewModel(
     private val navigator: Navigator,
     private val toast: Toasts,
     private val resources: Resources,
     private val colorsRepository: ColorsRepository,
-    private val tasksFactory: TasksFactory,
     screen: ChangeColorFragment.Screen,
     savedStateHandle: SavedStateHandle,
-    dispatcher: Dispatcher,
-) : BaseViewModel(dispatcher), ColorsAdapter.Listener {
+) : BaseViewModel(), ColorsAdapter.Listener {
 
     private val _availableColors = MutableLiveResult<List<NamedColor>>()
     private val _currentColorId = savedStateHandle.getLiveData(currentColorIdKey, screen.currentColorId)
@@ -55,21 +52,20 @@ class ChangeColorViewModel(
         _viewState.addSource(_saveInProgress) { mergeSources() }
     }
 
-    fun onSavePressed() {
+    fun onSavePressed() = viewModelScope.launch {
         _saveInProgress.postValue(true)
-        tasksFactory.async {
-            val currentColorId = _currentColorId.value ?: throw IllegalStateException("Current color ID should be not NULL")
-            val currentColor = colorsRepository.getById(currentColorId).await()
-            colorsRepository.setCurrentColor(currentColor).await()
-            return@async currentColor
-        }.safeEnqueue(::onSaved)
-    }
-
-    private fun onSaved(result: FinalResult<NamedColor>) {
-        _saveInProgress.value = false
-        when (result) {
-            is SuccessResult -> navigator.goBack(result.data)
-            is ErrorResult -> toast.toast(resources.getString(R.string.error_happened))
+        try {
+            val currentColorId = _currentColorId.value
+                ?: throw IllegalStateException("Current color ID should be not NULL")
+            val currentColor = colorsRepository.getById(currentColorId)
+            colorsRepository.setCurrentColor(currentColor)
+            navigator.goBack(currentColor)
+        } catch (e: Exception) {
+            if(e !is CancellationException) {
+                toast.toast(resources.getString(R.string.error_happened))
+            }
+        } finally {
+            _saveInProgress.value = false
         }
     }
 
@@ -96,7 +92,9 @@ class ChangeColorViewModel(
 
     fun tryAgain() = load()
 
-    private fun load() = colorsRepository.getAvailableColor().into(_availableColors)
+    private fun load() = into(_availableColors) {
+        colorsRepository.getAvailableColor()
+    }
 
     companion object {
         const val currentColorIdKey = "currentColorId"

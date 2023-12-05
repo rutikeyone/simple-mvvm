@@ -1,7 +1,7 @@
 package com.ru.foundation.sideeffects
 
-import com.ru.foundation.model.tasks.dispatchers.Dispatcher
-import com.ru.foundation.model.tasks.dispatchers.MainThreadDispatcher
+import com.ru.foundation.model.dispatchers.Dispatcher
+import com.ru.foundation.model.dispatchers.MainThreadDispatcher
 import ua.cn.stu.foundation.utils.ResourceActions
 
     open class SideEffectMediator<Implementation>(

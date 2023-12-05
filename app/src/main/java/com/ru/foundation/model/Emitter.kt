@@ -1,11 +1,6 @@
-package com.ru.foundation.model.tasks.callback
-
-import com.ru.foundation.model.FinalResult
+package com.ru.foundation.model
 
 typealias CancelListener = () -> Unit
-
-typealias ExecutionListener<T> = (Emitter<T>) -> Unit
-
 
 interface Emitter<T> {
 

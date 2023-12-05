@@ -4,12 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.ru.foundation.model.ErrorResult
 import com.ru.foundation.model.PendingResult
 import com.ru.foundation.model.Result
-import com.ru.foundation.model.tasks.Task
-import com.ru.foundation.model.tasks.TaskListener
-import com.ru.foundation.model.tasks.dispatchers.Dispatcher
+import com.ru.foundation.model.SuccessResult
 import com.ru.foundation.utils.Event
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 typealias LiveEvent<T> = LiveData<Event<T>>
 typealias MutableLiveEvent<T> = MutableLiveData<Event<T>>
@@ -18,44 +23,34 @@ typealias LiveResult<T> = LiveData<Result<T>>
 typealias MutableLiveResult<T> = MutableLiveData<Result<T>>
 typealias MediatorLiveResult<T> = MediatorLiveData<Result<T>>
 
-open class BaseViewModel(
-    private val dispatcher: Dispatcher
-) : ViewModel() {
+open class BaseViewModel: ViewModel() {
 
-    private val tasks = mutableSetOf<Task<*>>()
+    private val coroutineContext = SupervisorJob() + Dispatchers.Main.immediate
+    protected val viewModelScope = CoroutineScope(coroutineContext)
 
     override fun onCleared() {
         super.onCleared()
-        clearTasks()
+        cancelCoroutineScope()
     }
 
-    open fun onResult(result: Any) {
-
-    }
+    open fun onResult(result: Any) {}
 
     open fun onBackPressed(): Boolean {
-        clearTasks()
+        cancelCoroutineScope()
         return false
     }
 
-    fun <T> Task<T>.safeEnqueue(listener: TaskListener<T>? = null) {
-        tasks.add(this)
-        this.enqueue(dispatcher) {
-            tasks.remove(this)
-            listener?.invoke(it)
-        }
-    }
-
-    fun <T> Task<T>.into(liveResult: MutableLiveResult<T>) {
+    fun <T> into(liveResult: MutableLiveResult<T>, block: suspend () -> T) {
         liveResult.value = PendingResult()
-        this.safeEnqueue {
-            liveResult.value = it
+        viewModelScope.launch {
+            try {
+                liveResult.value = SuccessResult(block())
+            } catch (e: Exception) {
+                liveResult.value = ErrorResult(e)
+            }
         }
     }
 
-    private fun clearTasks() {
-        tasks.forEach { it.cancel() }
-        tasks.clear()
-    }
+    private fun cancelCoroutineScope() = viewModelScope.cancel()
 
 }

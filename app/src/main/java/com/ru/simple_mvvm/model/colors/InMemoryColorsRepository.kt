@@ -1,22 +1,21 @@
 package com.ru.simple_mvvm.model.colors
 
 import android.graphics.Color
-import com.ru.foundation.model.tasks.Task
-import com.ru.foundation.model.tasks.ThreadUtils
-import com.ru.foundation.model.tasks.factories.TasksFactory
+import com.ru.foundation.model.coroutines.CoroutineDispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 class InMemoryColorsRepository(
-    private val tasksFactory: TasksFactory,
-    private val threadUtils: ThreadUtils,
-) : ColorsRepository {
+    private val ioDispatcher: CoroutineDispatchers.IODispatcher,
+): ColorsRepository {
 
     private val listeners = mutableListOf<ColorListener>()
 
     private var currentColor = AVAILABLE_COLORS[0]
 
-    override fun getAvailableColor(): Task<List<NamedColor>> = tasksFactory.async {
-        threadUtils.sleep(1000)
-        AVAILABLE_COLORS
+    override suspend fun getAvailableColor(): List<NamedColor> = withContext(ioDispatcher.value) {
+        delay(1000)
+        return@withContext AVAILABLE_COLORS
     }
 
     override fun addListener(listener: ColorListener) {
@@ -27,22 +26,22 @@ class InMemoryColorsRepository(
         listeners -= listener
     }
 
-    override fun getById(id: Long): Task<NamedColor> = tasksFactory.async {
-        threadUtils.sleep(1000)
-        return@async AVAILABLE_COLORS.first { it.id == id }
+    override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
+        delay(1000)
+        return@withContext AVAILABLE_COLORS.first { it.id == id }
     }
 
-    override fun setCurrentColor(color: NamedColor): Task<Unit> = tasksFactory.async {
-        threadUtils.sleep(1000)
+    override suspend fun setCurrentColor(color: NamedColor) = withContext(ioDispatcher.value) {
+        delay(1000)
         if(currentColor != color) {
             currentColor = color
             listeners.forEach { it(currentColor) }
         }
     }
 
-    override fun getCurrentColor(): Task<NamedColor> = tasksFactory.async {
-        threadUtils.sleep(1000)
-        return@async currentColor
+    override suspend fun getCurrentColor(): NamedColor = withContext(ioDispatcher.value) {
+        delay(1000)
+        return@withContext currentColor
     }
 
     companion object {

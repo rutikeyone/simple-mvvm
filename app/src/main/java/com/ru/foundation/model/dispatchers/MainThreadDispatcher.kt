@@ -1,4 +1,4 @@
-package com.ru.foundation.model.tasks.dispatchers
+package com.ru.foundation.model.dispatchers
 
 import android.os.Handler
 import android.os.Looper
