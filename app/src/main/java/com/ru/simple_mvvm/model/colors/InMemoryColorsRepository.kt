@@ -2,7 +2,14 @@ package com.ru.simple_mvvm.model.colors
 
 import android.graphics.Color
 import com.ru.foundation.model.coroutines.CoroutineDispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
 class InMemoryColorsRepository(
@@ -18,26 +25,36 @@ class InMemoryColorsRepository(
         return@withContext AVAILABLE_COLORS
     }
 
-    override fun addListener(listener: ColorListener) {
-        listeners += listener
-    }
 
-    override fun removeListener(listener: ColorListener) {
-        listeners -= listener
-    }
+    override fun listenCurrentColor(): Flow<NamedColor> = callbackFlow {
+        val listener : ColorListener = {
+            trySend(it)
+        }
+        listeners.add(listener)
+        awaitClose {
+            listeners.remove(listener)
+        }
+    }.buffer(Channel.CONFLATED)
 
     override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
         delay(1000)
         return@withContext AVAILABLE_COLORS.first { it.id == id }
     }
 
-    override suspend fun setCurrentColor(color: NamedColor) = withContext(ioDispatcher.value) {
-        delay(1000)
+    override fun setCurrentColor(color: NamedColor): Flow<Int> = flow {
         if(currentColor != color) {
+            var progress = 0
+            while(progress < 100) {
+                progress += 2
+                delay(30)
+                emit(progress)
+            }
             currentColor = color
-            listeners.forEach { it(currentColor) }
+            listeners.forEach{ it(currentColor) }
+        } else {
+            emit(100)
         }
-    }
+    }.flowOn(ioDispatcher.value)
 
     override suspend fun getCurrentColor(): NamedColor = withContext(ioDispatcher.value) {
         delay(1000)

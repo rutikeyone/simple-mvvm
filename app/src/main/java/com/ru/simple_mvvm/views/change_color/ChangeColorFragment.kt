@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ru.simple_mvvm.R
 import com.ru.simple_mvvm.databinding.FragmentChangeColorBinding
@@ -15,6 +18,8 @@ import com.ru.foundation.views.BaseScreen
 import com.ru.foundation.views.screenViewModel
 import com.ru.simple_mvvm.views.onTryAgain
 import com.ru.simple_mvvm.views.renderSimpleResult
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class ChangeColorFragment : BaseFragment(), HasScreenTitle {
 
@@ -36,16 +41,20 @@ class ChangeColorFragment : BaseFragment(), HasScreenTitle {
         setupLayoutManager(adapter)
         saveButton.setOnClickListener { viewModel.onSavePressed() }
         cancelButton.setOnClickListener { viewModel.onCancelPressed() }
-        viewModel.viewState.observe(viewLifecycleOwner) { result ->
-            renderSimpleResult(root, result) {
-                adapter.colors = it.colors
-                with(binding) {
-                    saveButton.isVisible = it.showSaveButton
-                    cancelButton.isVisible = it.showCancelButton
-                    saveProgressBar.isVisible = it.showSaveProgressBar
+
+        viewModel.viewState
+            .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .onEach { result ->
+                renderSimpleResult(root, result) {
+                    adapter.colors = it.colors
+                    with(binding) {
+                        saveButton.isVisible = it.showSaveButton
+                        cancelButton.isVisible = it.showCancelButton
+                        saveProgressBar.isVisible = it.showSaveProgressBar
+                    }
                 }
             }
-        }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         viewModel.screenTitle.observe(viewLifecycleOwner) {
             notifyScreenUpdates()
