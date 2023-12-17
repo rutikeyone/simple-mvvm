@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/colorsRecyclerView"
@@ -39,12 +40,46 @@
 
     <include layout="@layout/part_result" />
 
-    <ProgressBar
-        android:id="@+id/saveProgressBar"
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/saveProgressGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/saveButton"
+        app:constraint_referenced_ids="savingHintTextView, saveProgressPercentageTextView, saveProgressBar"/>
+
+    <TextView
+        android:id="@+id/savingHintTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/please_wait"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="@id/saveProgressBar"
+        app:layout_constraintEnd_toEndOf="@id/saveProgressBar"
+        app:layout_constraintBottom_toTopOf="@id/saveProgressBar" />
+
+    <ProgressBar
+        android:id="@+id/saveProgressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_16"
+        tools:progress="33"
+        android:max="100"
+        android:layout_marginBottom="@dimen/dp_16"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/saveProgressPercentageTextView"/>
+
+    <TextView
+        android:id="@+id/saveProgressPercentageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp_16"
+        app:layout_constraintStart_toEndOf="@id/saveProgressBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/saveProgressBar"
+        app:layout_constraintBottom_toBottomOf="@id/saveProgressBar"
+        tools:text="100%"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

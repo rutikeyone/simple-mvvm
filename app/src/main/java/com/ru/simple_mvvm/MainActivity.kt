@@ -12,6 +12,7 @@ import com.ru.foundation.sideeffects.toasts.plugin.ToastsPlugin
 import com.ru.foundation.views.activity.BaseActivity
 import com.ru.simple_mvvm.views.current_color.CurrentColorFragment
 
+
 class MainActivity : BaseActivity() {
 
     override fun registerPlugins(manager: SideEffectPluginsManager) = with (manager) {
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
     }
 
     private fun createNavigator() = StackFragmentNavigator(

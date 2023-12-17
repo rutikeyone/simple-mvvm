@@ -3,4 +3,5 @@
     <dimen name="item_width">120dp</dimen>
     <dimen name="dp_6">6dp</dimen>
     <dimen name="sp_16">16sp</dimen>
+    <dimen name="dp_16">16dp</dimen>
 </resources>

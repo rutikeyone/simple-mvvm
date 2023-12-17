@@ -2,10 +2,12 @@ package com.ru.simple_mvvm.model.colors
 
 import android.graphics.Color
 import com.ru.foundation.model.coroutines.CoroutineDispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
@@ -16,8 +18,6 @@ class InMemoryColorsRepository(
     private val ioDispatcher: CoroutineDispatchers.IODispatcher,
 ): ColorsRepository {
 
-    private val listeners = mutableListOf<ColorListener>()
-
     private var currentColor = AVAILABLE_COLORS[0]
 
     override suspend fun getAvailableColor(): List<NamedColor> = withContext(ioDispatcher.value) {
@@ -25,16 +25,13 @@ class InMemoryColorsRepository(
         return@withContext AVAILABLE_COLORS
     }
 
+    private val currentColorFLow = MutableSharedFlow<NamedColor>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_LATEST,
+    )
 
-    override fun listenCurrentColor(): Flow<NamedColor> = callbackFlow {
-        val listener : ColorListener = {
-            trySend(it)
-        }
-        listeners.add(listener)
-        awaitClose {
-            listeners.remove(listener)
-        }
-    }.buffer(Channel.CONFLATED)
+    override fun listenCurrentColor(): Flow<NamedColor> = currentColorFLow
 
     override suspend fun getById(id: Long): NamedColor = withContext(ioDispatcher.value) {
         delay(1000)
@@ -50,14 +47,14 @@ class InMemoryColorsRepository(
                 emit(progress)
             }
             currentColor = color
-            listeners.forEach{ it(currentColor) }
+            currentColorFLow.emit(currentColor)
         } else {
             emit(100)
         }
     }.flowOn(ioDispatcher.value)
 
     override suspend fun getCurrentColor(): NamedColor = withContext(ioDispatcher.value) {
-        delay(1000)
+        delay(100)
         return@withContext currentColor
     }
 

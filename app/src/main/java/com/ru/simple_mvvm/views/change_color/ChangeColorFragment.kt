@@ -50,7 +50,9 @@ class ChangeColorFragment : BaseFragment(), HasScreenTitle {
                     with(binding) {
                         saveButton.isVisible = it.showSaveButton
                         cancelButton.isVisible = it.showCancelButton
-                        saveProgressBar.isVisible = it.showSaveProgressBar
+                        saveProgressGroup.isVisible = it.showSaveProgressBar
+                        saveProgressBar.progress = it.saveProgressPercentage
+                        saveProgressPercentageTextView.text = it.saveProgressPercentageMessage
                     }
                 }
             }
